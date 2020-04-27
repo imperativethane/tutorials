@@ -23,6 +23,8 @@ assert.equal(response.status, 200);
 Headless browser scriptable with a JavaScript API that allows us to write tests that mimic user interaction.
 Means we can avoid rendering the application in the browser.
 
+This has been deprecated and is no longer supported. Google Chrome now has a built in headless browser.
+
 ### WebdriverI/O
 
 WebdriverIO provides methods that allow us to programmatically interact with the user-facing elements of our app in the headless browser that PhantomJS runs.
@@ -30,6 +32,9 @@ WebdriverIO provides methods that allow us to programmatically interact with the
 Needs to be saved as a devDependency in package.json
 
 ### SuperTest 
+
+A library for making Node server requests and testing their responses.
+
 Provides the functionality required to test APIs. Can make get/post requests.
 
 ```javascript
@@ -42,8 +47,11 @@ const response = await request(app).
 get('/');
 ```
 
-### JSDOM 
-Allows you to create the parseTextFromHTML helper function which will take your response and all you to find the text that is to be rendered within the HTML.
+### JSDOM
+
+A library for interacting and testing the DOM returned by the server.
+
+Allows you to create the parseTextFromHTML helper function which will take your response and allows you to find the text that is to be rendered within the HTML.
 
 ```javascript
 const {jsdom} = require(‘jsdom’);
@@ -65,6 +73,14 @@ const parseTextFromHTML = (htmlAsString, selector) => {
 ## Feature Testing/Browser Testing
 
 Feature tests exercise behaviour by simulating a user navigating the application in a web browser.
+
+Feature tests often incorporate every layer of the application and — using WebDriverI/O and Mocha — exercise features in the same way that a human user would. They’re a good tool for reproducing end-user behavior.
+
+Feedback from feature tests is usually in terms of HTML (i.e. that text or button that you said would be on the page isn’t on the page).
+
+Because feature tests typically hit every layer of a developer’s stack, they are slower than tests at lower layers, and errors thrown in feature tests can be difficult to interpret and provide little guidance on what the developer can do to resolve them.
+
+Their value, however, is in developer confidence that the software functions as expected.
 
 #### Example One
 
@@ -116,6 +132,10 @@ Once you get to a test that won't pass then it's time to move to the server test
 
 ## Server Testing
 
+Server tests are commonly used to test API responses, but we also use server tests for any server response that our application relies on. This can include checking status codes and error messages.
+
+Server tests are used to test the server response only, not any front-end rendering of code or user interactions. 
+
 ### Test status codes - httpstatuses.com
 
 ```javascript
@@ -149,6 +169,13 @@ Need to create tests that:
       assert.equal(parseTextFromHTML(response.text, '#page-title'), 'Messaging App');
     });
 ```
+
+This example uses:
+* async/await functions
+* The SuperTest library to allow us to make a request to the app.js file as well as a get request call.
+* parseTextFromHTML to get the text-content from the html response as the page-title id.
+* Chai assertion
+
 ##### Example Two
 ```javascript
 describe('POST', () => {
